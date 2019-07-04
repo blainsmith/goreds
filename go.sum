@@ -1,0 +1,6 @@
+github.com/a2800276/porter v0.0.0-20131003104603-70973579505f h1:sf6RujIMJo1eyxL3TTCNiJFkojR5kDe3zfh2LUwf9M8=
+github.com/a2800276/porter v0.0.0-20131003104603-70973579505f/go.mod h1:q6G8ORFEObx+JGsz3v7zZfdKNf1PiqDITf8D+nlvDgY=
+github.com/dotcypress/phonetics v0.0.0-20141025200009-5cea56e8d200 h1:3y43HNVcW0K++6HB7RsWIdulZ5zzrLYBBtPccYsqTdc=
+github.com/dotcypress/phonetics v0.0.0-20141025200009-5cea56e8d200/go.mod h1:nTAuszUNo9dUCKTwDLN9UDcO5UdL/MAOvmu5oM+5ozY=
+github.com/garyburd/redigo v1.6.0 h1:0VruCpn7yAIIu7pWVClQC8wxCJEcG3nyzpMSHKi1PQc=
+github.com/garyburd/redigo v1.6.0/go.mod h1:NR3MbYisc3/PwhQ00EMzDiPmrwpPxAn5GI05/YaO1SY=
