@@ -1,15 +1,13 @@
 language: go
 
 go:
-  - "1.11"
   - "1.12"
 
 install:
   - go mod vendor
 
 env:
-  - REDIS_URL=redis://localhost:6379
-  - GO111MODULE=on
+  - REDIS_URL=redis://localhost:6379 GO111MODULE=on
 
 services:
   - redis-server
