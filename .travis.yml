@@ -9,6 +9,7 @@ install:
 
 env:
   - REDIS_URL=redis://localhost:6379
+  - GO111MODULE=on
 
 services:
   - redis-server
