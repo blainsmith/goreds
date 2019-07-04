@@ -1,10 +1,11 @@
 language: go
 
-go: 1.7
+go:
+  - "1.11"
+  - "1.12"
 
 install:
-  - go get -u github.com/kardianos/govendor
-  - govendor sync
+  - go mod vendor
 
 env:
   - REDIS_URL=redis://localhost:6379
@@ -12,4 +13,4 @@ env:
 services:
   - redis-server
 
-script: govendor test +local
+script: go test -v ./...
