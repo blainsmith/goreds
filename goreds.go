@@ -29,25 +29,30 @@ func NewClient(redis redis.Conn, namespace string) *Client {
 }
 
 // Index will store the `id` within the database and use the `text` as the searchable text
-func (client *Client) Index(text, id string) (interface{}, error) {
+func (client *Client) Index(text, id string) error {
 	w := words.StemsArray(words.StripStopWords(words.Split(text)))
 	c := words.Count(w)
 	mm := words.MetaphoneMap(w)
 
 	client.Redis.Send("MULTI")
-	for i, _ := range mm {
+	for i := range mm {
 		client.Redis.Send("ZADD", client.Namespace+":word:"+mm[i], c[i], id)
 		client.Redis.Send("ZADD", client.Namespace+":object:"+id, c[i], mm[i])
 	}
 
-	return client.Redis.Do("EXEC")
+	_, err := client.Redis.Do("EXEC")
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // Remove will delete the `id` from the database so it is not longer searchable
-func (client *Client) Remove(id string) (interface{}, error) {
+func (client *Client) Remove(id string) error {
 	reply, err := redis.Strings(client.Redis.Do("ZREVRANGEBYSCORE", client.Namespace+":object:"+id, "+inf", 0))
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	client.Redis.Send("MULTI")
@@ -56,7 +61,12 @@ func (client *Client) Remove(id string) (interface{}, error) {
 		client.Redis.Send("ZREM", client.Namespace+":word:"+m, id)
 	}
 
-	return client.Redis.Do("EXEC")
+	_, err = client.Redis.Do("EXEC")
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // Query performs a search against the database and returns a slice of ids that match
@@ -91,8 +101,9 @@ func (client *Client) Query(text string, operator Operator) ([]string, error) {
 
 	var ids []string
 	count := 0
-	for len(values) > 0 {
-		values, err = redis.Scan(values, &count, &ids)
+	_, err = redis.Scan(values, &count, &ids)
+	if err != nil {
+		return nil, err
 	}
 
 	return ids, nil
