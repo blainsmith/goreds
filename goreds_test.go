@@ -2,7 +2,6 @@ package goreds_test
 
 import (
 	"fmt"
-	"os"
 	"testing"
 
 	"github.com/garyburd/redigo/redis"
@@ -10,11 +9,13 @@ import (
 	"blainsmith.com/go/goreds"
 )
 
-var conn, err = redis.DialURL(os.Getenv("REDIS_URL"))
-
-var search = goreds.NewClient(conn, "testing")
-
 func TestNewClient(t *testing.T) {
+	conn, err := redis.DialURL("redis://localhost:6379")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer conn.Close()
+
 	t.Run("with namespace", func(t *testing.T) {
 		ns := goreds.NewClient(conn, "WITH_NAMESPACE")
 		if ns.Namespace != "WITH_NAMESPACE" {
@@ -49,22 +50,46 @@ func ExampleNewClient() {
 }
 
 func TestIndex(t *testing.T) {
+	conn, err := redis.DialURL("redis://localhost:6379")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer conn.Close()
+
+	search := goreds.NewClient(conn, "testing")
+
 	testtext := "Some text I would like to index for searching in the future."
 
-	_, err := search.Index(testtext, "12345")
+	err = search.Index(testtext, "12345")
 	if err != nil {
 		t.Fatal(err)
 	}
 }
 
 func TestRemove(t *testing.T) {
-	_, err := search.Remove("12345")
+	conn, err := redis.DialURL("redis://localhost:6379")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer conn.Close()
+
+	search := goreds.NewClient(conn, "testing")
+
+	err = search.Remove("12345")
 	if err != nil {
 		t.Fatal(err)
 	}
 }
 
 func TestQuery(t *testing.T) {
+	conn, err := redis.DialURL("redis://localhost:6379")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer conn.Close()
+
+	search := goreds.NewClient(conn, "testing")
+
 	search.Index("baller search text", "111")
 	search.Index("some more baller text to find", "222")
 	search.Index("this text not be found", "333")
